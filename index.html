@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Cloud vs. Serverless vs. Edge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="preconnect"
+        href="https://supabase.luka-zeleznik10.workers.dev" />
+  <link rel="preconnect"
+        href="https://upstash.luka-zeleznik10.workers.dev" />
+  <link rel="preconnect"
+        href="https://neondb.luka-zeleznik10.workers.dev" />
+  <link rel="preconnect"
+        href="https://supabase-pg.luka-zeleznik10.workers.dev" />
+  <link rel="preconnect"
+        href="https://polyscale.luka-zeleznik10.workers.dev" />
+  <link rel="preconnect"
+        href="https://accelerate.luka-zeleznik10.workers.dev" />
+  <link rel="preconnect"
+        href="https://planetscale.luka-zeleznik10.workers.dev" />
+
+  <link rel="preconnect"
+        href="https://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com" />
+  <link rel="preconnect"
+        href="https://ec2-54-162-49-55.compute-1.amazonaws.com" />
+  <link rel="preconnect"
+        href="https://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com" />
+
+  <link rel="preconnect"
+        href="https://accelerate-speed-test-navy.vercel.app" />
+  <link rel="preconnect"
+        href="https://vercel-edge-lukazeleznik.vercel.app" />
+  <link rel="preconnect"
+        href="https://masterthesis-vercel-serverless.vercel.app" />
+
+
+
+
+</head>
+
+<body class="bg-slate-700">
+  <div class="py-12 px-8 lg:px-40">
+    <h1 class="text-4xl font-bold p-6 text-white">
+      Cloud vs. Serverless vs. Edge
+    </h1>
+
+    <div class="mx-4 p-6 rounded-lg items-center bg-slate-800">
+      <div class="flex gap-12">
+        <div class="">
+          <label for="backend"
+                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Choose a backend provider
+          </label>
+          <select id="backend"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option value="CloudflareWorkers"
+                    selected>
+              Cloudflare workers (Global)
+            </option>
+            <option value="VercelGlobal">
+              Vercel Edge function (Global)
+            </option>
+            <option value="VercelRegionalEurope">
+              Vercel Edge function (Europe)
+            </option>
+            <option value="VercelRegionalAmerica">
+              Vercel Edge function (America)
+            </option>
+            <option value="VercelRegionalAustralia">
+              Vercel Edge function (Australia)
+            </option>
+            <option value="VercelServerless">
+              Vercel Serverless function (Europe)
+            </option>
+
+            <option value="AmazonEC2"
+                    disabled>Amazon EC2 (Europe)</option>
+            <option value="AmazonEC2US"
+                    disabled>Amazon EC2 (America)</option>
+            <option value="AmazonEC2AU"
+                    disabled>Amazon EC2 (Australia)</option>
+          </select>
+        </div>
+
+        <div class="">
+          <label for="database"
+                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Choose a database provider
+          </label>
+          <select id="database"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option value="SupabasePg"
+                    selected>PostgreSQL</option>
+            <option value="Supabase">PostgreSQL w/ Supabase client</option>
+            <option value="PlanetscaleDB"
+                    disabled>PlanetscaleDB</option>
+            <option value="Upstash"
+                    disabled>Upstash</option>
+            <option value="Polyscale"
+                    disabled>Polyscale</option>
+            <option value="Accelerate">
+              Prisma Accelerate
+            </option>
+            <option value="NeonDB">NeonDB</option>
+          </select>
+        </div>
+
+        <div class="">
+          <div class="text-white mb-4">Number of sequential queries</div>
+          <div class="flex items-center mb-4">
+            <input id="default-radio-1"
+                   type="radio"
+                   value="1"
+                   name="default-radio"
+                   checked
+                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+            <label for="default-radio-1"
+                   class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              1
+            </label>
+          </div>
+          <div class="flex items-center mb-4">
+            <input id="default-radio-2"
+                   type="radio"
+                   value="2"
+                   name="default-radio"
+                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+            <label for="default-radio-2"
+                   class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              2
+            </label>
+          </div>
+          <div class="flex items-center">
+            <input id="default-radio-3"
+                   type="radio"
+                   value="5"
+                   name="default-radio"
+                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+            <label for="default-radio-3"
+                   class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              5
+            </label>
+          </div>
+        </div>
+
+        <div class="max-w-[10rem]">
+          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded"
+                  onclick="runTest()">
+            Run test
+          </button>
+          <label for="download"
+                 class="text-white font-medium my-1">
+            Download result
+          </label>
+          <input type="checkbox"
+                 id="download"
+                 class="text-white font-medium my-1" />
+          <div id="errorText"
+               class="text-red-500 font-medium my-1"></div>
+        </div>
+      </div>
+      <div class="flex gap-8 flex-wrap">
+        <canvas id="frontendCanvas"
+                class="max-h-[20rem]"></canvas>
+        <canvas id="backendCanvas"
+                class="max-h-[20rem]"></canvas>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  const urlMapping = {
+    CloudflareWorkers_Supabase: "https://supabase.luka-zeleznik10.workers.dev/",
+    CloudflareWorkers_Upstash: "https://upstash.luka-zeleznik10.workers.dev/",
+    CloudflareWorkers_NeonDB: "https://neondb.luka-zeleznik10.workers.dev/",
+    CloudflareWorkers_SupabasePg:
+      "https://supabase-pg.luka-zeleznik10.workers.dev/",
+    CloudflareWorkers_Polyscale:
+      "https://polyscale.luka-zeleznik10.workers.dev/",
+    CloudflareWorkers_Accelerate:
+      "https://accelerate.luka-zeleznik10.workers.dev/",
+    CloudflareWorkers_PlanetscaleDB:
+      "https://planetscale.luka-zeleznik10.workers.dev/",
+
+    AmazonEC2_Supabase:
+      "http://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com/supabase/",
+    AmazonEC2_Upstash:
+      "http://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com/upstash/",
+    AmazonEC2_NeonDB:
+      "http://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com/neondb/",
+    AmazonEC2_SupabasePg:
+      "http://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com/supabase-pg/",
+    AmazonEC2_Polyscale:
+      "http://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com/polyscale/",
+    AmazonEC2_Accelerate:
+      "http://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com/accelerate/",
+    AmazonEC2_PlanetscaleDB:
+      "http://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com/planetscale/",
+
+    AmazonEC2US_Supabase:
+      "http://ec2-54-162-49-55.compute-1.amazonaws.com/supabase/",
+    AmazonEC2US_Upstash:
+      "http://ec2-54-162-49-55.compute-1.amazonaws.com/upstash/",
+    AmazonEC2US_NeonDB:
+      "http://ec2-54-162-49-55.compute-1.amazonaws.com/neondb/",
+    AmazonEC2US_SupabasePg:
+      "http://ec2-54-162-49-55.compute-1.amazonaws.com/supabase-pg/",
+    AmazonEC2US_Polyscale:
+      "http://ec2-54-162-49-55.compute-1.amazonaws.com/polyscale/",
+    AmazonEC2US_Accelerate:
+      "http://ec2-54-162-49-55.compute-1.amazonaws.com/accelerate/",
+    AmazonEC2US_PlanetscaleDB:
+      "http://ec2-54-162-49-55.compute-1.amazonaws.com/planetscale/",
+
+    AmazonEC2AU_Supabase:
+      "http://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com/supabase/",
+    AmazonEC2AU_Upstash:
+      "http://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com/upstash/",
+    AmazonEC2AU_NeonDB:
+      "http://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com/neondb/",
+    AmazonEC2AU_SupabasePg:
+      "http://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com/supabase-pg/",
+    AmazonEC2AU_Polyscale:
+      "http://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com/polyscale/",
+    AmazonEC2AU_Accelerate:
+      "http://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com/accelerate/",
+    AmazonEC2AU_PlanetscaleDB:
+      "http://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com/planetscale/",
+
+    VercelServerless_Supabase:
+      "https://masterthesis-vercel-serverless.vercel.app/api/supabase/",
+    VercelServerless_Upstash:
+      "https://masterthesis-vercel-serverless.vercel.app/api/upstash/",
+    VercelServerless_NeonDB:
+      "https://masterthesis-vercel-serverless.vercel.app/api/neondb/",
+    VercelServerless_SupabasePg:
+      "https://masterthesis-vercel-serverless.vercel.app/api/supabase-pg/",
+    VercelServerless_Polyscale:
+      "https://masterthesis-vercel-serverless.vercel.app/api/polyscale/",
+    VercelServerless_Accelerate:
+      "https://accelerate-speed-test-navy.vercel.app/api/accelerateServerless",
+    VercelServerless_PlanetscaleDB:
+      "https://masterthesis-vercel-serverless.vercel.app/api/planetscale/",
+
+    VercelGlobal_Supabase:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/global/supabase/",
+    VercelGlobal_Upstash:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/global/upstash/",
+    VercelGlobal_NeonDB:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/global/neondb/",
+    VercelGlobal_Polyscale:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/global/polyscale/",
+    VercelGlobal_Accelerate:
+      "https://accelerate-speed-test-navy.vercel.app/api/accelerate",
+    VercelGlobal_PlanetscaleDB:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/global/planetscale/",
+
+    VercelRegionalEurope_Supabase:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-europe/supabase/",
+    VercelRegionalEurope_Upstash:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-europe/upstash/",
+    VercelRegionalEurope_NeonDB:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-europe/neondb/",
+    VercelRegionalEurope_Polyscale:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-europe/polyscale/",
+    VercelRegionalEurope_Accelerate:
+      "https://accelerate-speed-test-navy.vercel.app/api/accelerateEU",
+    VercelRegionalEurope_PlanetscaleDB:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-europe/planetscale/",
+
+    VercelRegionalAmerica_Supabase:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-america/supabase/",
+    VercelRegionalAmerica_Upstash:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-america/upstash/",
+    VercelRegionalAmerica_NeonDB:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-america/neondb/",
+    VercelRegionalAmerica_Polyscale:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-america/polyscale/",
+    VercelRegionalAmerica_Accelerate:
+      "https://accelerate-speed-test-navy.vercel.app/api/accelerateUS",
+    VercelRegionalAmerica_PlanetscaleDB:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-america/planetscale/",
+
+    VercelRegionalAustralia_Supabase:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-australia/supabase/",
+    VercelRegionalAustralia_Upstash:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-australia/upstash/",
+    VercelRegionalAustralia_NeonDB:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-australia/neondb/",
+    VercelRegionalAustralia_Polyscale:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-australia/polyscale/",
+    VercelRegionalAustralia_Accelerate:
+      "https://accelerate-speed-test-navy.vercel.app/api/accelerateAU",
+    VercelRegionalAustralia_PlanetscaleDB:
+      "https://vercel-edge-lukazeleznik.vercel.app/api/regional-australia/planetscale/"
+  };
+
+
+  // HEAD request for every domain
+
+  const domains = [
+    "https://supabase.luka-zeleznik10.workers.dev",
+    "https://upstash.luka-zeleznik10.workers.dev",
+    "https://neondb.luka-zeleznik10.workers.dev",
+    "https://supabase-pg.luka-zeleznik10.workers.dev",
+    "https://polyscale.luka-zeleznik10.workers.dev",
+    "https://accelerate.luka-zeleznik10.workers.dev",
+    "https://planetscale.luka-zeleznik10.workers.dev",
+    "https://ec2-35-158-75-148.eu-central-1.compute.amazonaws.com",
+    "https://ec2-54-162-49-55.compute-1.amazonaws.com",
+    "https://ec2-13-210-105-100.ap-southeast-2.compute.amazonaws.com",
+    "https://accelerate-speed-test-navy.vercel.app",
+    "https://vercel-edge-lukazeleznik.vercel.app",
+    "https://masterthesis-vercel-serverless.vercel.app"
+  ];
+
+  for (const element of domains) {
+    fetch(element, {
+      method: "HEAD"
+    });
+  }
+
+</script>
+
+<script>
+  let isRunning = false;
+  const ctx = document.getElementById("frontendCanvas");
+  const ctx2 = document.getElementById("backendCanvas");
+
+  Chart.defaults.color = "#f4f4f4";
+
+  let chart1 = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: "Response time to client (ms)",
+          data: [],
+          borderWidth: 1,
+          backgroundColor: "rgba(45, 186, 73)",
+          borderColor: "rgba(45, 186, 73)"
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+          /* grid: {
+            color: "#303030"
+          } */
+        },
+        x: {
+          /* grid: {
+            color: "#303030"
+          } */
+        }
+      }
+    }
+  });
+
+  let chart2 = new Chart(ctx2, {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: "Response time to backend (ms)",
+          data: [],
+          borderWidth: 1,
+          backgroundColor: "rgba(45, 186, 73)",
+          borderColor: "rgba(45, 186, 73)"
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  function addData1(label, data) {
+    chart1.data.labels.push(label);
+    chart1.data.datasets.forEach((dataset) => {
+      dataset.data.push(data);
+    });
+    chart1.update();
+  }
+
+  function addData2(label, data) {
+    chart2.data.labels.push(label);
+    chart2.data.datasets.forEach((dataset) => {
+      dataset.data.push(data);
+    });
+    chart2.update();
+  }
+
+  function removeData(chart) {
+    chart.data.labels = [];
+    chart.data.datasets.forEach((dataset) => {
+      dataset.data = [];
+    });
+    chart.update();
+  }
+
+  const vercelEdgeBackends = [
+    "VercelGlobal",
+    "VercelRegionalEurope",
+    "VercelRegionalAmerica",
+    "VercelRegionalAustralia"
+  ];
+
+  const pgReliantDatabases = ["SupabasePg"];
+
+  function runTest() {
+    console.log("isRunning", isRunning);
+    if (isRunning) return;
+    if (
+      vercelEdgeBackends.includes(document.getElementById("backend").value) &&
+      pgReliantDatabases.includes(document.getElementById("database").value)
+    ) {
+      document.getElementById("errorText").innerText = `Connection to ${document.getElementById("database").value
+        } not possible from Vercel Edge.`;
+      return;
+    } else {
+      document.getElementById("errorText").innerText = "";
+    }
+
+    isRunning = true;
+
+    const backend = document.getElementById("backend").value;
+    const database = document.getElementById("database").value;
+    const sequentialQueries = document.querySelector(
+      'input[name="default-radio"]:checked'
+    ).value;
+
+    console.log(backend, database, sequentialQueries);
+
+    removeData(chart1);
+    removeData(chart2);
+
+    fetchData(backend, database, sequentialQueries);
+  }
+
+  async function fetchData(backend, database, sequentialQueries) {
+    try {
+      const download = document.getElementById("download").checked;
+      const url =
+        urlMapping[`${backend}_${database}`] +
+        `?sequentialQueries=${sequentialQueries}`;
+
+      console.log("url", url);
+
+      let downloadData = [];
+
+      for (let i = 0; i < 10; i++) {
+        const time1 = performance.now();
+        const res = await fetch(url);
+        console.log(res);
+        const time2 = performance.now();
+
+        const time = time2 - time1;
+
+        let resJson = {};
+        resJson = await res.json();
+        console.log(resJson);
+
+        addData1("" + (i + 1), time);
+        addData2("" + (i + 1), resJson.executionTime);
+
+        downloadData.push({
+          client: Number.parseInt(time),
+          backend: resJson.executionTime
+        });
+      }
+
+      if (download) {
+        saveTemplateAsFile(
+          `${backend}_${database}_${sequentialQueries}.json`,
+          downloadData
+        );
+      }
+      isRunning = false;
+    } catch (e) {
+      isRunning = false;
+      console.log(e);
+      document.getElementById("errorText").innerText = e;
+      return;
+    }
+  }
+
+  const saveTemplateAsFile = (filename, dataObjToWrite) => {
+    const blob = new Blob([JSON.stringify(dataObjToWrite)], {
+      type: "text/json"
+    });
+    const link = document.createElement("a");
+
+    link.download = filename;
+    link.href = window.URL.createObjectURL(blob);
+    link.dataset.downloadurl = ["text/json", link.download, link.href].join(
+      ":"
+    );
+
+    const evt = new MouseEvent("click", {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    });
+
+    link.dispatchEvent(evt);
+    link.remove();
+  };
+</script>
